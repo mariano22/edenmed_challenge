@@ -1,5 +1,31 @@
 # EdenMed Segmentation Challenge
 
+# Uso rápido
+
+#### Instalación
+
+Instalar las dependencias con:
+```
+pip install -r requirements.txt
+```
+
+#### Segmentar una imágen
+
+Se puede utilizar el modelo de segmentación en una imágen con el comando:
+```
+python segmentation.py --image data/test_classifier/a.jpg --model models/unet-6v.pt --out mask.jpg
+```
+
+#### Determinar si la imágen corresponde a un torax
+
+Para previamente determinar si la imágen contiene un torax se puede usar:
+
+```
+python torax_detection.py --image data/test_classifier/a.jpg --model models/torax_detector_model.pth
+```
+Output (clase y probabildiad respectiva):
+> torax 0.84
+
 # Informe
 
 Las siguientes secciones incluyen la guía paso a paso de cómo se ha resuelto el challenge.
