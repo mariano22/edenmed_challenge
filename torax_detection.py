@@ -190,4 +190,5 @@ if __name__ == '__main__':
 
     model = load_model(args.model)
     label, confidence = predict_image(args.image, model)
-    print(f"{label} {confidence:.2f}")
+    print(f"class={label}")
+    print(f"confidence={confidence:.2f}")

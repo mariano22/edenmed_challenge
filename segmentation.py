@@ -8,6 +8,7 @@ from PIL import Image
 import torchvision.transforms.functional as TF
 import torch.nn.functional as F
 from torchvision.transforms.functional import to_pil_image
+from torchvision.models import VGG11_Weights
 
 from tools import get_torch_device
 
@@ -72,7 +73,7 @@ class PretrainedUNet(torch.nn.Module):
         
         self.init_conv = torch.nn.Conv2d(in_channels, 3, 1)
         
-        endcoder = torchvision.models.vgg11(pretrained=True).features
+        endcoder = torchvision.models.vgg11(weights=VGG11_Weights.DEFAULT).features
         self.conv1 = endcoder[0]   # 64
         self.conv2 = endcoder[3]   # 128
         self.conv3 = endcoder[6]   # 256
@@ -175,6 +176,8 @@ if __name__ == '__main__':
     model = load_model(args.model)
     msk = predict(args.image, model)
     msk.save(args.out)
+    print("Segmentation finished!")
+    print(f"Mask was generated: {args.out}")
     
 
         

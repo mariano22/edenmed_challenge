@@ -1,5 +1,8 @@
 # EdenMed Segmentation Challenge
 
+![Python](https://img.shields.io/badge/python-3.10-blue.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 # Uso rápido
 
 #### Instalación
@@ -16,6 +19,9 @@ Se puede utilizar el modelo de segmentación en una imágen con el comando:
 python segmentation.py --image data/test_classifier/a.jpg --model models/unet-6v.pt --out mask.jpg
 ```
 
+> Segmentation finished!
+> Mask was generated: mask.jpg
+
 #### Determinar si la imágen corresponde a un torax
 
 Para previamente determinar si la imágen contiene un torax se puede usar:
@@ -24,7 +30,8 @@ Para previamente determinar si la imágen contiene un torax se puede usar:
 python torax_detection.py --image data/test_classifier/a.jpg --model models/torax_detector_model.pth
 ```
 Output (clase y probabildiad respectiva):
-> torax 0.84
+> class=torax
+> confidence=0.84
 
 # Informe
 
@@ -136,7 +143,8 @@ El modelo de selección de tórax quedó guardado en `models/torax_detector_mode
 python torax_detection.py --image data/test_classifier/a.jpg --model models/torax_detector_model.pth
 ```
 Output (clase y probabildiad respectiva):
-> torax 0.84
+> class=torax
+> confidence=0.84
 
 Ejemplos de imágenes de internet clasificadas:
 
@@ -156,6 +164,9 @@ Se puede utilizar el modelo de segmentación en una imágen con el comando:
 ```
 python segmentation.py --image data/test_classifier/a.jpg --model models/unet-6v.pt --out mask.jpg
 ```
+
+> Segmentation finished!
+> Mask was generated: mask.jpg
 
 El comando anterior generará una imagen blanco y negro con la máscara en el path que se le indique en el argumento --out
 
