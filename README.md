@@ -65,7 +65,7 @@ Nota: para cada `study_id` se encontró un único `file_name` asosciado.
 
 Para cada estudio, contiene un reporte en HTML escrito en lenguaje natural español.
 
-![Tablas presentes en la base de datos](./nbs-images/tables.png)
+![Tablas presentes en la base de datos](./images/tables.png)
 
 **Otras Observaciones:**
 - `study_patient_data` contiene una única fila por `study_id`.
@@ -85,11 +85,11 @@ Se ha calculado:
 - La distribución de los CTR.
 **Nota**: el código que genera los gráficos está en la notebook: `notebook.ipynb`
 
-![Composición de los estudios por sexo.](./nbs-images/sex_composition.png)
+![Composición de los estudios por sexo.](./images/sex_composition.png)
 
-![Composición de los estudios por edad.](./nbs-images/age.png)
-![Composición de los estudios por modalidad.](./nbs-images/modalities_composition.png)
-![Distribución CTR](./nbs-images/ctr.png)
+![Composición de los estudios por edad.](./images/age.png)
+![Composición de los estudios por modalidad.](./images/modalities_composition.png)
+![Distribución CTR](./images/ctr.png)
 
 ### Propuesta para el análisis de los reportes médicos
 
@@ -152,7 +152,7 @@ Output (clase y probabildiad respectiva):
 
 Ejemplos de imágenes de internet clasificadas:
 
-![Imágenes de internet clasificadas por el clasificador entrenado](./nbs-images/classifier_results.png)
+![Imágenes de internet clasificadas por el clasificador entrenado](./images/classifier_results.png)
 
 ## Segementando pulmones
 
@@ -162,7 +162,7 @@ El código que se ha utilizado es el de [Repositorio de segmentación pulmonar (
 
 Un ejemplo de una imágen del dataset superpuesta con la máscara generada por el modelo:
 
-![Ejemplo de imágen superpuesta por su máscara de segmentación.](./nbs-images/segmentation_example.png)
+![Ejemplo de imágen superpuesta por su máscara de segmentación.](./images/segmentation_example.png)
 
 Se puede utilizar el modelo de segmentación en una imágen con el comando:
 ```
@@ -174,7 +174,7 @@ python segmentation.py --image data/test_classifier/a.jpg --model models/unet-6v
 
 El comando anterior generará una imagen blanco y negro con la máscara en el path que se le indique en el argumento --out
 
-![Composición de los estudios por modalidad.](./nbs-images/output_mask.png)
+![Composición de los estudios por modalidad.](./images/output_mask.png)
 
 Las imágenes de `data/binary_classifier/torax` se han procesado con el segmentador y guardado en `data/binary_classifier_torax_mask`
 

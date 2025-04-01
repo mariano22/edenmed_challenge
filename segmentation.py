@@ -159,6 +159,29 @@ def predict(filename, model):
     mask_img = to_pil_image(pred_resized*255)
     return mask_img
 
+def solve_provided_dataset():
+    input_dir = "data/binary_dataset/torax/"
+    output_dir = "data/binary_dataset_torax_masks/"
+    
+    # Create output directory if it doesn't exist
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # Loop through all files in the input directory
+    for filename in tqdm(os.listdir(input_dir)):
+        input_path = os.path.join(input_dir, filename)
+        
+        if os.path.isfile(input_path):
+            try:
+                mask = segmentation.predict(input_path, model)
+                # Construct output filename
+                name, ext = os.path.splitext(filename)
+                output_filename = f"{name}_mask{ext}"
+                output_path = os.path.join(output_dir, output_filename)
+                # Save output image
+                mask.save(output_path)
+            except Exception as e:
+                print(f"Failed to process {filename}: {e}")
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Apply the Lung Segmentation Model")
     parser.add_argument('--image', type=str, required=True, help='Path to the image')
