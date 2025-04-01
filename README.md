@@ -33,6 +33,10 @@ Output (clase y probabildiad respectiva):
 > class=torax
 > confidence=0.84
 
+#### Solución al dataset suministrado
+
+El dataset suministrado (`data/challenge_data`) se dividió en imágenes de tórax e imágenes que no correspondían a tórax (`data/binary_dataset`) utilizando el clasificador (`torax_detection.py`) y las imágenes respectiva a tórax se segmentaron utilizando el modelo de segmentación mencionado (`segmentation.py`) produciéndo finalmente las máscaras que se incluyeron en `data/binary_dataset_torax_masks`.
+
 # Informe
 
 Las siguientes secciones incluyen la guía paso a paso de cómo se ha resuelto el challenge.
