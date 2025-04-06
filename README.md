@@ -94,6 +94,10 @@ Se ha calculado:
 ### Propuesta para el análisis de los reportes médicos
 
 Para el análisis de los reportes médicos se propone generar una ontología para cada reporte.
+La ontología es una secuencia de pares (clave, valor) extrayendo todos los datos estructurados del reporte que se encuentren.
+Se realiza utilizando un LLM. Actualmente se usa gpt-4o de OpenAI aunque fácilmente se podría adaptar para usar otra interfaz.
+Además de eso, clasifica en "NORMAL" y "ANORMAL" cada observación.
+
 Por ejemplo el reporte:
 
 ````{verbatim}
@@ -102,18 +106,54 @@ La arteria pulmonar de 16mm. (normal hasta 17mm).La región parahiliar sin ensan
 
 Generaría la siguiente ontología:
 ```
+NORMAL
 arteria_pulmonar.mm = 16
 region_parahiliar.ensanchamientos = False
-mediastino_superior.normal = True
+rmediastino_superior.normal = True
 silueta_cardiaca.normal = True
-indice_cardiotoracico = 0.42
-estructuras_vasculares.alteraciones = False
-vena_cava_superior.alteraciones = False
-aorta.alteraciones = False
-arterias pulmonares.alteraciones = False
+indice_cardiotorácico = 0.42
+ANORMAL
+estructuras_vasculares.alteraciones = True
+vena_cava_superior.alteraciones = True
+aorta.alteraciones = True
+arterias pulmonares.alteraciones = True
+columna_lumbar.cambios_osteodegenerativos = True
+columna_lumbar.escoliosis_izquierda = True
 ```
 
 El prompt para generar dichas ontologías se encuentra en `ontology.py`
+
+#### Analizando los reportes
+
+La ventaja de este abordaje es que permite realizar análisis de los reportes con simples reglas, recorriendo la ontología generada y las llamadas a la API de LLM (lento y costoso) se hace una sóla vez. 
+
+En las siguientes subsecciones se encuentran algunos análisis que se pueden realizar (el código respectivo para calcularlo está en `notebook.ipynb`).
+
+La ontología de cada estudio está guardada en `data/ontology.pkl` y el código usado para calcularla está en `ontology.py`
+
+##### Histograma de distribución de Ángulo de Ferguson
+
+![IHistograma de distribución de Ángulo de Ferguson](./images/ferguson_angles.png)
+
+##### Casos diagnosticados de escoleosis
+
+```
+14 casos con escoliosis: 
+- 003b88ed-bdd5-4bac-89b2-c170d9418d75
+- 0403dfdd-9ac4-4d6b-86ab-fb3647e90891
+- 082ca1b1-a9a2-4c77-9a55-64f06c920f4b
+- 0df07efa-1e39-4c57-96cf-eee4a2e16eff
+- 1ec28fe0-2868-494b-b129-21caf9a01927
+- 21e23158-711c-478a-8429-0ac9caa00484
+- 4aa65847-6f5f-4559-8bd0-7482ed01f097
+- 5c016336-0d4e-4b7f-aa33-a518f00b0bf4
+- 904c8271-12a2-4015-9f62-f5ea97fe2337
+- a1e11c71-583e-4620-90eb-ebe901676694
+- a225cdb1-ec06-428f-8aa2-f19bf892000a
+- b43aeabc-f687-4aa6-976d-489a9ecb8ed2
+- daf33fc7-870a-424b-a169-d538f21d2fa2
+- f97c2d0e-c063-4b02-adbb-ca67e154f2b5
+```
 
 ## Construcción del dataset
 
@@ -204,12 +244,14 @@ Ambos datasets se encuentran en el siguiente [archivo](https://drive.google.com/
 │   ├── CHNCXR_0002_0.png  
 │   ├── ...  (662 archivos)
 │   ├── MCUCXR_0001_0.png    
+│   ├── MCUCXR_0002_0.png    
 │   └── ...  (138 archivos)
 └── 📁 mask/
     ├── CHNCXR_0001_0_mask.png  
     ├── CHNCXR_0002_0_mask.png  
     ├── ...  (662 archivos)
     ├── MCUCXR_0001_0_mask.png  
+    ├── MCUCXR_0002_0_mask.png  
     └── ...  (138 archivos)
 ```
 

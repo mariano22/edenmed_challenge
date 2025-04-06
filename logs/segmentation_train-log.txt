@@ -1,0 +1,18 @@
+epoch=0.0000 train_loss=0.2588 val_loss=0.2461 val_jaccard=0.8270 val_dice=0.9168 time=387.3884
+
+epoch=0.0000 train_loss=0.2335 val_loss=0.2278 val_jaccard=0.8215 val_dice=0.9135 time=378.0706
+
+model saved
+STARTING LOOP OF 30 EPOCHS
+epoch=0.0000 train_loss=0.2196 val_loss=0.2177 val_jaccard=0.8315 val_dice=0.9204 time=404.6558
+
+model saved
+epoch=1.0000 train_loss=0.2116 val_loss=0.2099 val_jaccard=0.8358 val_dice=0.9231 time=412.5376
+
+model saved
+epoch=2.0000 train_loss=0.2053 val_loss=0.2057 val_jaccard=0.8511 val_dice=0.9319 time=414.6949
+
+model saved
+epoch=3.0000 train_loss=0.2003 val_loss=0.2044 val_jaccard=0.8556 val_dice=0.9344 time=2594.7166
+
+model saved
