@@ -92,13 +92,15 @@ class LungDataset(torch.utils.data.Dataset):
     def __getitem__(self, idx):
         fname = self.file_names[idx]
         
-        image = torchvision.io.read_image(SEGMENTATION_IMAGES_PATH / (fname + ".png")).float()/255.0
+        image_fp = SEGMENTATION_IMAGES_PATH / (fname + ".png")
+        image = torchvision.io.read_image(str(image_fp)).float()/255.0
         if image.shape[0]==1:  
             image = image.repeat(3,1,1)
         if self.image_transform is not None:
             image = self.image_transform(image)
 
-        mask = torchvision.io.read_image(SEGMENTATION_MASK_PATH / (fname + ("_mask" if SHENZHEN_PREFIX in fname else "") + ".png")).float()/255.0
+        mask_fp = SEGMENTATION_MASK_PATH / (fname + ("_mask" if SHENZHEN_PREFIX in fname else "") + ".png")
+        mask = torchvision.io.read_image(str(mask_fp)).float()/255.0
         if self.mask_transform is not None:
             mask = self.mask_transform(mask)
         
@@ -143,7 +145,7 @@ def train_epoch(device, datasets, dataloaders, unet, optimizer, criterion):
     train_loss = 0
     for images, masks in tqdm(dataloaders["train"]):
         images = images.to(device)
-        masks = masks.to(device).squeeze(1)
+        masks = masks.to(device=device, dtype=torch.long).squeeze(1)
         
         optimizer.zero_grad()
         
@@ -168,7 +170,7 @@ def valid_epoch(device, datasets, dataloaders, unet, criterion):
         batch_size = images.size(0)
     
         images = images.to(device)
-        masks = masks.to(device).squeeze(1)
+        masks = masks.to(device=device, dtype=torch.long).squeeze(1)
     
         with torch.no_grad():
             logits = unet(images)
@@ -191,38 +193,34 @@ def valid_epoch(device, datasets, dataloaders, unet, criterion):
             ("val_jaccard", val_jaccard),
             ("val_dice", val_dice), ])
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Train our own Segmentation Model")
-    parser.add_argument('--epochs', type=int, required=True, help='Number of epochs to train')
-    args = parser.parse_args()
-
+def train_for_epochs(n_epochs):
     splits = load_filenames_splits()
-    
+
     image_tfms = transforms.Compose([ # We upscale the 1-channel images here so we use ImageNet mean/std normalize
             transforms.Resize((512, 512)),
             transforms.Normalize(mean=[0.485, 0.456, 0.406],  # ImageNet mean/std because we are using VGG11_Weights
-                                 std=[0.229, 0.224, 0.225])
+                                    std=[0.229, 0.224, 0.225])
         ])
-    
+
     mask_tfms = transforms.Compose([
                 transforms.Resize((512, 512)),
             ])
 
     datasets = {split_key: LungDataset(splits[split_key], image_tfms, mask_tfms) for split_key in splits}
-    
+
     dataloaders = { split_key: DataLoader(datasets[split_key],
-                                     batch_size=BATCH_SIZE,
-                                     #num_workers=4, 
-                                     shuffle=(split_key=="train"),
-                                     drop_last=(split_key=="train")) for split_key in split }
-    
+                                        batch_size=BATCH_SIZE,
+                                        #num_workers=4, 
+                                        shuffle=(split_key=="train"),
+                                        drop_last=(split_key=="train")) for split_key in splits }
+
     device = get_torch_device()
-    
+
     unet = UNet(n_channels=3, n_classes=2, bilinear=True)
     unet = unet.to(device)
     optimizer = torch.optim.Adam(unet.parameters(), lr=1e-4)
     criterion = torch.nn.CrossEntropyLoss()
-    
+
     best_val_loss = np.inf
     history = []
 
@@ -230,9 +228,10 @@ if __name__ == '__main__':
         def log(line):
             print(line)
             train_log_file.write(line + "\n")
+            train_log_file.flush()
 
-        log(f"STARTING LOOP OF {EPOCHS} EPOCHS")
-        for epoch in range(args.epochs):
+        log(f"STARTING LOOP OF {n_epochs} EPOCHS")
+        for epoch in range(n_epochs):
             metrics = OrderedDict([("epoch", epoch)])
             
             start_t = time.time()
@@ -253,5 +252,9 @@ if __name__ == '__main__':
                 best_val_loss = metrics["val_loss"]
                 torch.save(unet.state_dict(), MODELS_FOLDER / MODEL_NAME)
                 log("model saved")
-    
-    
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Train our own Segmentation Model")
+    parser.add_argument('--epochs', type=int, required=True, help='Number of epochs to train')
+    args = parser.parse_args()
+    train_for_epochs(args.epochs)

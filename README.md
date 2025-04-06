@@ -224,6 +224,30 @@ La razón de por qué elegimos [este repositorio](https://github.com/IlliaOvchar
 - El código de entrenamiento mediante el cual podemos verificar que ha sido entrenado correctamente (con splits de train, validación y test).
 - Los splits (`splits.pk`) que nos permite replicar el entrenamiento realizado.
 
+### Entrenando nuestro propio modelo
+
+En el archivo `segmentation_train.py` se encuentra el entrenamiento de otro modelo UNet, cuya arquitectura hemos copiado de [Pytorch-UNet](https://github.com/milesial/Pytorch-UNet).
+
+El loop de entrenamiento lo escribimos totalmente de cerp. Y para entrenar usamos un split de los datos con una mejor metodología que la adoptada por el modelo usado en las secciones anteriores:
+- Para el conjunto de desarrollo (train + validación): utilizamos *Shenzhen Dataset*
+- Para el conjunto de test: utilizamos *Montgomery Dataset*
+
+El objetivo con esta metodología es simular que el dataset en el que se va a usar es distinto (posiblemente con distintos aparatos de imágen) que el dataset de entrenamiento.
+
+Los pesos del modelo se guardaron en `models/unet-enmed.pt`.
+
+Las curvas costo y métricas en validación y entrenamiento se grafican a continuación:
+
+En el split de test se han obtenido las siguientes métricas: **Jaccard score - , Dice score -** . (comparables al modelo utilizado en las secciones anteriores).
+
+
+#### Acotaciones y trabajo futuro
+
+Algunas notas de pendientes y posibles mejores:
+- Se ha utilizado un mini batch de tamaño 4. Esto es porque valores mayores no entraban en la memoria de la GPU usada (P5000). Se podría simular mini-batches más grande utilizando `accumulation_steps` durante el entrenamiento.
+- El tamaño del dataset de entrenamiento es pequeño ~530 imágenes (85% del Shenzhen Dataset). Se podría aplicar data augmentation para enrobustecer el modelo. La modificación requiere ser cuidadoso de preservar la correspondencia de los píxeles entre inputs y máscaras, pero esto lo maneja todo muy bien librerías como [albumentations](https://github.com/albumentations-team/albumentations).
+- Data augmentation también puede aplicarse en tiempo de inferencia (y luego hacer un merge los resultados). Esto requiere transformaciones inversibles, para lo cuál se puede utilizar la librería [ttach](https://github.com/qubvel/ttach)
+
 
 # Apéndice I: Datasets
 
