@@ -240,7 +240,7 @@ Las curvas costo y métricas en validación y entrenamiento se grafican a contin
 
 ![Training graphs](./images/training.png)
 
-En el split de test se han obtenido las siguientes métricas: **Jaccard score - 0.5436, Dice score - 0.7022** . (comparables al modelo utilizado en las secciones anteriores).
+En el split de test se han obtenido las siguientes métricas: **Jaccard score - 0.7496, Dice score - 0.8401** . Se puede observar que con nuestrra metodología los resultados son comparativamente peor. Se puede concluir que es importante usar más datos e incluir diferentes datasets.
 
 
 #### Acotaciones y trabajo futuro
