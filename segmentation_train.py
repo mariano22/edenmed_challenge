@@ -160,13 +160,13 @@ def train_epoch(device, datasets, dataloaders, unet, optimizer, criterion):
         ("train_loss", train_loss),
     ])
 
-def valid_epoch(device, datasets, dataloaders, unet, criterion):
+def valid_epoch(device, datasets, dataloaders, unet, criterion, split_name="val"):
     unet.eval()
     val_loss = 0.0
     val_jaccard = 0.0
     val_dice = 0.0
     
-    for images, masks in tqdm(dataloaders["val"]):
+    for images, masks in tqdm(dataloaders[split_name]):
         batch_size = images.size(0)
     
         images = images.to(device)
@@ -185,17 +185,15 @@ def valid_epoch(device, datasets, dataloaders, unet, criterion):
             val_dice += dice(masks, predictions).item() * batch_size
     
     
-    val_loss = val_loss / len(datasets["val"])
-    val_jaccard = val_jaccard / len(datasets["val"])
-    val_dice = val_dice / len(datasets["val"])
+    val_loss = val_loss / len(datasets[split_name])
+    val_jaccard = val_jaccard / len(datasets[split_name])
+    val_dice = val_dice / len(datasets[split_name])
     return OrderedDict([ 
-            ("val_loss", val_loss),
-            ("val_jaccard", val_jaccard),
-            ("val_dice", val_dice), ])
+            (f"{split_name}_loss", val_loss),
+            (f"{split_name}_jaccard", val_jaccard),
+            (f"{split_name}_dice", val_dice), ])
 
-def train_for_epochs(n_epochs):
-    splits = load_filenames_splits()
-
+def get_dataloaders(splits):
     image_tfms = transforms.Compose([ # We upscale the 1-channel images here so we use ImageNet mean/std normalize
             transforms.Resize((512, 512)),
             transforms.Normalize(mean=[0.485, 0.456, 0.406],  # ImageNet mean/std because we are using VGG11_Weights
@@ -213,6 +211,13 @@ def train_for_epochs(n_epochs):
                                         #num_workers=4, 
                                         shuffle=(split_key=="train"),
                                         drop_last=(split_key=="train")) for split_key in splits }
+    return datasets, dataloaders
+    
+
+def train_for_epochs(n_epochs):
+    splits = load_filenames_splits()
+
+    datasets, dataloaders = get_dataloaders(splits)
 
     device = get_torch_device()
 

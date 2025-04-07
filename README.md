@@ -238,7 +238,9 @@ Los pesos del modelo se guardaron en `models/unet-enmed.pt`.
 
 Las curvas costo y métricas en validación y entrenamiento se grafican a continuación:
 
-En el split de test se han obtenido las siguientes métricas: **Jaccard score - , Dice score -** . (comparables al modelo utilizado en las secciones anteriores).
+![Training graphs](./images/training.png)
+
+En el split de test se han obtenido las siguientes métricas: **Jaccard score - 0.5436, Dice score - 0.7022** . (comparables al modelo utilizado en las secciones anteriores).
 
 
 #### Acotaciones y trabajo futuro
